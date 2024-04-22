@@ -11,6 +11,7 @@
 
 // // http://localhost:3000/api/foo/bar -> http://www.example.org/api/foo/bar
 
+require('dotenv').config();
 const NotionAPICall = require("./notion");
 
 const express = require("express");
