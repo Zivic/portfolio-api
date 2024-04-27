@@ -10,23 +10,32 @@ const NotionAPICall = async () => {
   // const response = await parseNotionBlocks()
 
   //TODO: clean this up
-  const response = await notion.databases.query({ database_id: databaseId });
-  let test;
-  console.log(response);
-  test = response.results.map((project) => {
-    let projectProperties = new Array();
-    for (let property in project.properties) {
-      if (project.properties[property].hasOwnProperty("rich_text")) {
-        projectProperties.push(
-          project.properties[property].rich_text[0].plain_text
-        );
+  const notionResponse = await notion.databases.query({ database_id: databaseId });
+  let notionDatabase;
+  notionDatabase = notionResponse.results.map((row) => {
+    let projectProperties = {};
+    for (let property in row.properties) {
+      if (row.properties[property].hasOwnProperty("rich_text")) {
+        const propValue = row.properties[property];
+        projectProperties[`${property}`] =
+        propValue.rich_text.length > 0 ? propValue.rich_text[0].plain_text : "";
+      } 
+      else if (row.properties[property].hasOwnProperty("multi_select")) {
+        let techStack = new Array();
+        const propValue = row.properties[property];
+        if (propValue.multi_select.length > 0) {
+          techStack = propValue.multi_select.map((technology) => {
+            return { name: technology.name };
+          });
+        }
+        projectProperties[`${property}`] = techStack;
       }
     }
     console.log("PROJECTPROPERTIES", projectProperties);
 
     return projectProperties;
   });
-  return test;
+  return notionDatabase;
 };
 
 module.exports = NotionAPICall;
