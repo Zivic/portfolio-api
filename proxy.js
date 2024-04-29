@@ -30,7 +30,7 @@ app.use(cors(corsOptions));
 // Define the /api endpoint
 app.get("/api", async (req, res) => {
   const notionBlocks = await NotionAPICall().then((a) => {
-    console.log(a);
+    // console.log(a);
     res.send(a);
   });
 });
