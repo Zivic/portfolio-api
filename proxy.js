@@ -13,7 +13,8 @@
 
 require('dotenv').config();
 const NotionAPICall = require("./notion");
-
+const https = require("https");
+const fs = require('fs');
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -22,11 +23,21 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 
 const corsOptions = {
-  origin: "http://localhost:3000", //(https://www.georgez.dev)
+  origin: "htts://www.georgez.dev", 
   optionsSuccessStatus: 200,
 };
 
+// Load SSL certificate and private key
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem'),
+  passphrase: process.env.HTTPS_PASSPHRASE
+};
+
 app.use(cors(corsOptions));
+
+
+
 // Define the /api endpoint
 app.get("/api", async (req, res) => {
   const notionBlocks = await NotionAPICall().then((a) => {
@@ -35,7 +46,11 @@ app.get("/api", async (req, res) => {
   });
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// // Start the server
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
+// Create HTTPS server
+https.createServer(options, app).listen(443, () => {
+  console.log('Server running on https://localhost:443');
 });

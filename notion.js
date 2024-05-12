@@ -20,6 +20,12 @@ const getNotionChildrenBlocks = async (blockId) => {
 const NotionAPICall = async () => {
   const notionResponse = await notion.databases.query({
     database_id: databaseId,
+    sorts: [
+	    {
+	      property: "ID",
+	      direction: "ascending"
+		  }
+	  ],
   });
   let notionDatabase;
   console.log("UNFILTERED: ", notionResponse.results[0].url);
